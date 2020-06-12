@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "382297304957",
+    "firebase_url": "https://eventnotify-5d79c.firebaseio.com",
+    "project_id": "eventnotify-5d79c",
+    "storage_bucket": "eventnotify-5d79c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382297304957:android:c7846c1761b2614e0e2614",
+        "android_client_info": {
+          "package_name": "com.rangetech.eventnotify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "382297304957-b36nqpp0ohqb6k8eeojies06vuo5pm1e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rangetech.eventnotify",
+            "certificate_hash": "a5e350e0aa84d7404406fced46b2be2f2c7a2bd7"
+          }
+        },
+        {
+          "client_id": "382297304957-1f09q8v8hufvrq2gfujgv4e5saj8tbhk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADbxhsmZxPDlFftOA0dARSHm---SWPp70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382297304957-1f09q8v8hufvrq2gfujgv4e5saj8tbhk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
