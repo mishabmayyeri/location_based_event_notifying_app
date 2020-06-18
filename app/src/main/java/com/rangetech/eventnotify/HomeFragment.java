@@ -30,7 +30,6 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView event_list_view;
     private List<EventPost> event_list;
-
     private FirebaseFirestore firebaseFirestore;
     private EventRecyclerAdapter eventRecyclerAdapter;
     private FirebaseAuth firebaseAuth;
@@ -44,30 +43,53 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         event_list = new ArrayList<>();
         event_list_view = view.findViewById(R.id.event_list_view);
         firebaseAuth = FirebaseAuth.getInstance();
-
         eventRecyclerAdapter = new EventRecyclerAdapter(event_list);
         event_list_view.setLayoutManager(new LinearLayoutManager(container.getContext()));
         event_list_view.setAdapter(eventRecyclerAdapter);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        if(firebaseAuth.getCurrentUser()!=null) {
 
-            firebaseFirestore = FirebaseFirestore.getInstance();
-            Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp",Query.Direction.DESCENDING);
-            firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+            firebaseFirestore.collection("Posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
                         if (doc.getType() == DocumentChange.Type.ADDED) {
+
                             EventPost eventPost = doc.getDocument().toObject(EventPost.class);
                             event_list.add(eventPost);
                             eventRecyclerAdapter.notifyDataSetChanged();
+
                         }
                     }
+
                 }
             });
-
+        }
         // Inflate the layout for this fragment
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp",Query.Direction.DESCENDING);
+//        firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+//                @Override
+//                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+//                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+//                        if (doc.getType() == DocumentChange.Type.ADDED) {
+//                            EventPost eventPost = doc.getDocument().toObject(EventPost.class);
+//                            event_list.add(eventPost);
+//                            eventRecyclerAdapter.notifyDataSetChanged();
+//                        }
+//                    }
+//                }
+//            });
+//
+
     }
 }
