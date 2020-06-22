@@ -1,6 +1,7 @@
 package com.rangetech.eventnotify;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,11 +44,12 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
-        String desc_data = event_list.get(position).getDesc();
-        holder.setDescText(desc_data);
-        String image_url = event_list.get(position).getImage_url();
+        final String desc_data = event_list.get(position).getTitle();
+
+        holder.setTitleText(desc_data);
+        final String image_url = event_list.get(position).getImage_url();
         holder.setEventImage(image_url);
 
         String user_id =  event_list.get(position).getUser_id();
@@ -64,10 +66,30 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                 }
             }
         });
+         String dateString = "";
+        try {
+            long millisecond = event_list.get(position).getTimestamp().getTime();
+             dateString= new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
+            holder.setTime(dateString);
 
-        long millisecond = event_list.get(position).getTimestamp().getTime();
-        String dateString = new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
-        holder.setTime(dateString);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
+        final String finalDateString = dateString;
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent displayIntent=new Intent(context,EventDisplayActivity.class);
+                displayIntent.putExtra("EventName",desc_data);
+                displayIntent.putExtra("EventDetails",event_list.get(position).desc);
+                displayIntent.putExtra("EventCover",image_url);
+                displayIntent.putExtra("EventDate", finalDateString);
+                displayIntent.putExtra("AlbumId",event_list.get(position).getAlbum_id());
+                displayIntent.putExtra("EventLocation","SOE , CUSAT");
+                context.startActivity(displayIntent);
+            }
+        });
     }
 
     @Override
@@ -89,8 +111,8 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
             super(itemView);
             mView = itemView;
         }
-        public void setDescText(String descText) {
-            descView = mView.findViewById(R.id.event_desc);
+        public void setTitleText(String descText) {
+            descView = mView.findViewById(R.id.event_title);
             descView.setText(descText);
         }
         public void setEventImage(String downloadUri) {

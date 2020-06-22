@@ -10,36 +10,40 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
-import com.firebase.client.Firebase;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.okhttp.Dispatcher;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -48,6 +52,8 @@ import id.zelory.compressor.Compressor;
 
 public class PostActivity extends AppCompatActivity {
 
+    private static final String TAG = "Places";
+    private static final String POSTING = "Posting operation";
     private ImageView mSelectImage;
     private EditText mPostTitle;
     private EditText mPostDesc;
@@ -91,7 +97,7 @@ public class PostActivity extends AppCompatActivity {
 
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
-                        .setMinCropResultSize(512,512)
+                        .setMinCropResultSize(360,240)
                         .setAspectRatio(1,1)
                         .start(PostActivity.this);
 
@@ -106,7 +112,38 @@ public class PostActivity extends AppCompatActivity {
             }
         });
         mProgress = new ProgressDialog(this);
+        String apiKey = getString(R.string.api_key);
+
+        /**
+         * Initialize Places. For simplicity, the API key is hard-coded. In a production
+         * environment we recommend using a secure mechanism to manage API keys.
+         */
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), apiKey);
+        }
+
+        // Create a new Places client instance.
+        PlacesClient placesClient = Places.createClient(this);
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
     }
+
 
     private void startPosting() {
         mProgress.setMessage("Posting to Blog...");
@@ -126,9 +163,9 @@ public class PostActivity extends AppCompatActivity {
                         File newImageFile = new File(mImageUri.getPath());
                         try {
                             compressedImageFile = new Compressor(PostActivity.this)
-                                    .setMaxWidth(100)
-                                    .setMaxHeight(100)
-                                    .setQuality(2)
+                                    .setMaxWidth(360)
+                                    .setMaxHeight(240)
+                                    .setQuality(90)
                                     .compressToBitmap(newImageFile);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -136,6 +173,7 @@ public class PostActivity extends AppCompatActivity {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         compressedImageFile.compress(Bitmap.CompressFormat.JPEG,100,baos);
                         byte[] thumbData = baos.toByteArray();
+
                         final UploadTask thumbFilePath = storageReference.child("event_images/thumbs").child(randomName + ".jpg").putBytes(thumbData);
                         thumbFilePath.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -149,6 +187,10 @@ public class PostActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         String downloadUrl = uri.toString();
+
+                                        String album_id=firebaseFirestore.collection("Posts")
+                                                .document().getId();
+
                                         Map<String, Object> postMap = new HashMap<>();
                                         postMap.put("image_url", downloadUrl);
                                         postMap.put("title", title_val);
@@ -156,21 +198,29 @@ public class PostActivity extends AppCompatActivity {
                                         postMap.put("thumb",downloadThumbUri);
                                         postMap.put("user_id", current_user_id);
                                         postMap.put("timestamp", FieldValue.serverTimestamp());
-                                        firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentReference> task) {
-                                                if (task.isSuccessful()){
-                                                    Toast.makeText(PostActivity.this, "Post was added",Toast.LENGTH_LONG).show();
-                                                    Intent mainintent = new Intent(PostActivity.this,MainActivity.class);
-                                                    startActivity(mainintent);
-                                                    finish();
-                                                } else {
+                                        postMap.put("album_id",album_id);
 
-                                                }
-                                                newPostProgress.setVisibility(View.INVISIBLE);
-                                            }
-                                        });
-                                        mProgress.dismiss();
+                                        firebaseFirestore.collection("Posts")
+                                                .document(album_id)
+                                                .set(postMap)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()){
+
+
+                                                            Toast.makeText(PostActivity.this, "Post was added",Toast.LENGTH_LONG).show();
+                                                            Intent mainintent = new Intent(PostActivity.this, EventActivity.class);
+                                                            startActivity(mainintent);
+                                                            finish();
+
+                                                        }else{
+                                                            Log.i(POSTING,task.getException().getMessage());
+                                                        }
+                                                        mProgress.dismiss();
+
+                                                    }
+                                                });
                                     }
                                 });
                             }

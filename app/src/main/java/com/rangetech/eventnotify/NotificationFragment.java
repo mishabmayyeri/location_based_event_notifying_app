@@ -2,17 +2,36 @@ package com.rangetech.eventnotify;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class NotificationFragment extends Fragment {
+    private RecyclerView event_list_view;
+    private List<EventPost> event_list;
+    private FirebaseFirestore firebaseFirestore;
+    private MyEventRecyclerAdapter eventRecyclerAdapter;
+    private FirebaseAuth firebaseAuth;
+    private String currentUser;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -23,6 +42,45 @@ public class NotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notification, container, false);
+        View view = inflater.inflate(R.layout.fragment_notification, container, false);
+
+        event_list = new ArrayList<>();
+        event_list_view = view.findViewById(R.id.event_list_view);
+        firebaseAuth = FirebaseAuth.getInstance();
+        eventRecyclerAdapter = new MyEventRecyclerAdapter(event_list);
+        event_list_view.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        event_list_view.setAdapter(eventRecyclerAdapter);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+
+        if(firebaseAuth.getCurrentUser()!=null) {
+
+            currentUser=firebaseAuth.getUid();
+            firebaseFirestore.collection("Users")
+                    .document(currentUser)
+                    .collection("MyEvents").
+                    addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+                        if (doc.getType() == DocumentChange.Type.ADDED) {
+                            EventPost eventPost = doc.getDocument().toObject(EventPost.class);
+                            event_list.add(eventPost);
+                            eventRecyclerAdapter.notifyDataSetChanged();
+
+                        }
+                    }
+
+                }
+            });
+        }
+
+        return view;
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 }

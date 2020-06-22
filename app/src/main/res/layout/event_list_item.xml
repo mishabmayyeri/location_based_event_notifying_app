@@ -1,82 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:id="@+id/main_event_post"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginRight="16dp"
+    app:cardBackgroundColor="@color/bg_color"
+    app:cardCornerRadius="8dp"
+    android:elevation="5dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/main_event_post"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@drawable/curved_bg">
+
+        <TextView
+            android:id="@+id/event_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Username"
+            android:textStyle="bold"
+            android:visibility="gone"
+            />
+
+        <TextView
+            android:id="@+id/event_title"
+            style="@style/dhishna_tec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_image"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat"
+            android:textColor="@color/text_color"
+            android:text="@string/dhishna_tec"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:id="@+id/event_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="185dp"
+            android:scaleType="center"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_location_on_black_24dp" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/event_user_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/ellipse"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/button5"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@+id/event_title"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_my_location_black_24dp" />
 
-            <TextView
-                android:id="@+id/event_user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Username"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/event_user_image"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/location"
+            style="@style/soe_cusat"
+            android:textColor="@color/greyColour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/event_title"
+            android:layout_marginLeft="55dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/soe_cusat"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/event_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="EventPostDate"
-                app:layout_constraintStart_toEndOf="@+id/event_user_image"
-                app:layout_constraintTop_toBottomOf="@+id/event_user_name" />
+        <Button
+            android:id="@+id/button6"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@+id/location"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_calendar_black_24dp" />
 
-            <ImageView
-                android:id="@+id/event_image"
-                android:layout_width="0dp"
-                android:layout_height="256dp"
-                android:layout_marginTop="16dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/event_user_image"
-                app:srcCompat="@drawable/rectangle" />
+        <TextView
+            android:id="@+id/event_date"
+            style="@style/soe_cusat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/location"
+            android:layout_marginLeft="55dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/event_date"
+            android:textColor="@color/greyColour"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/event_desc"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="16dp"
-                android:text="Lorem ipsum dolor sit amet, soluta regione urbanitas vis in, qui elit populo ut. "
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/event_image" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/event_user_image"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="8dp"
+            android:layout_alignParentBottom="true"
+            android:alpha="0.8"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ellipse" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

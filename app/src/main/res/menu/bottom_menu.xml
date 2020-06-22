@@ -3,15 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bottom_action_home"
-        android:icon="@drawable/baseline_home_black_24"
-        android:title="@string/bottom_home_text" />
+        android:id="@+id/bottom_action_all_events"
+        android:icon="@drawable/ic_event_black_24dp"
+        android:title="All Events" />
     <item
-        android:id="@+id/bottom_action_notification"
-        android:icon="@drawable/baseline_notifications_black_24"
-        android:title="@string/bottom_notification_text" />
-    <item
-        android:id="@+id/bottom_action_account"
-        android:icon="@drawable/baseline_person_black_24"
-        android:title="@string/bottom_account_text" />
-</menu>
+        android:id="@+id/bottom_action_my_events"
+        android:icon="@drawable/ic_event_available_black_24dp"
+        android:title="My Events" />
+    </menu>

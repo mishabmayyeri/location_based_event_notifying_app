@@ -16,7 +16,6 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -51,6 +50,7 @@ public class HomeFragment extends Fragment {
         event_list_view.setLayoutManager(new LinearLayoutManager(container.getContext()));
         event_list_view.setAdapter(eventRecyclerAdapter);
         firebaseFirestore = FirebaseFirestore.getInstance();
+
         if(firebaseAuth.getCurrentUser()!=null) {
 
             firebaseFirestore.collection("Posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -76,20 +76,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-//        Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp",Query.Direction.DESCENDING);
-//        firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
-//                @Override
-//                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-//                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-//                        if (doc.getType() == DocumentChange.Type.ADDED) {
-//                            EventPost eventPost = doc.getDocument().toObject(EventPost.class);
-//                            event_list.add(eventPost);
-//                            eventRecyclerAdapter.notifyDataSetChanged();
-//                        }
-//                    }
-//                }
-//            });
-//
+
 
     }
 }

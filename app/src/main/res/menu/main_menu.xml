@@ -6,11 +6,23 @@
         android:id="@+id/action_search_btn"
         android:icon="@drawable/baseline_search_white_24"
         android:title="@string/action_search_text"
+        android:iconTint="@color/greyColour"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_setting_btn"
+        android:icon="@drawable/ic_account"
+        app:showAsAction="withText"
         android:title="@string/action_setting_text" />
     <item
         android:id="@+id/action_logout_btn"
-        android:title="@string/action_logout_text" />
+        android:title="@string/action_logout_text"
+        app:showAsAction="withText"
+        android:icon="@drawable/ic_power_settings_new_black_24dp"
+        />
+    <item
+        android:id="@+id/action_add_post"
+        android:title="@string/action_new_event"
+        app:showAsAction="withText"
+
+        />
 </menu>

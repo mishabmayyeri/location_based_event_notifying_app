@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".EventDisplayActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_collapseMode="parallax"
+
+                >
+                <ImageView
+                    android:id="@+id/event_cover"
+                    android:layout_width="match_parent"
+                    android:src="@drawable/ic_cover"
+                    android:layout_height="180dp"
+                    android:alpha="0.6"
+                    android:scaleType="centerCrop"/>
+            </FrameLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:subtitle="title"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_q_r_code" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="20.12.2012"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:maxLines="1"
+        android:elevation="0dp"
+        
+        android:padding="8dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@color/bg_color"
+        android:drawableStart="@drawable/ic_date"
+        android:drawableTint="@color/text_color"
+        android:textColor="@color/text_color"
+        android:id="@+id/dated"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="56dp"
+        >
+        ></Button>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="SOE CUSAT"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:maxLines="1"
+        android:elevation="0dp"
+        android:padding="8dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@color/bg_color"
+        android:drawableStart="@drawable/ic_location_on_black_24dp"
+        android:drawableTint="@color/text_color"
+        android:textColor="@color/text_color"
+        android:id="@+id/located"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        >
+        ></Button>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/event_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end"
+        android:backgroundTint="@color/action_color"
+        app:srcCompat="@drawable/ic_bookmark"
+        android:tint="@color/colorPrimary"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/event_fab_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end"
+        android:backgroundTint="@color/red"
+        app:srcCompat="@drawable/ic_cancel"
+        android:tint="@color/colorPrimary"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

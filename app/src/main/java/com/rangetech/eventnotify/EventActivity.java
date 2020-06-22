@@ -1,17 +1,7 @@
 package com.rangetech.eventnotify;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,8 +12,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class MainActivity extends AppCompatActivity {
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+public class EventActivity extends AppCompatActivity {
     private Toolbar mainToolbar;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firebaseFirestore;
@@ -34,18 +33,18 @@ public class MainActivity extends AppCompatActivity {
     private NotificationFragment notificationFragment;
     private AccountFragment accountFragment;
 
-    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_events);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Events Nearby");
+
+        setSupportActionBar(toolbar);
 
         mAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-        mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(mainToolbar);
-        getSupportActionBar().setTitle("Event Notify");
         if (mAuth.getCurrentUser() != null) {
             mainBottomNav = findViewById(R.id.mainBottomNav);
 
@@ -60,36 +59,24 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
-                        case R.id.bottom_action_home:
+                        case R.id.bottom_action_all_events:
                             replaceFragment(homeFragment);
                             return true;
-                        case R.id.bottom_action_notification:
+                        case R.id.bottom_action_my_events:
                             replaceFragment(notificationFragment);
                             return true;
-                        case R.id.bottom_action_account:
-                            replaceFragment(accountFragment);
-                            return true;
+
                         default:
                             return false;
                     }
                 }
             });
-
-            addPostBtn = findViewById(R.id.add_post_btn);
-            addPostBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent NewPostIntent = new Intent(MainActivity.this, PostActivity.class);
-                    startActivity(NewPostIntent);
-                    finish();
-                }
-            });
-
         }
-
     }
-
-
+    private void logOut()   {
+        mAuth.signOut();
+        sendToLogin();
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -103,19 +90,37 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         if (!task.getResult().exists()) {
-                            Intent setupIntent = new Intent(MainActivity.this,SetupActivity.class);
+                            Intent setupIntent = new Intent(EventActivity.this,SetupActivity.class);
                             startActivity(setupIntent);
                             finish();
                         }
                     } else {
                         String error = task.getException().getMessage();
-                        Toast.makeText(MainActivity.this, "Error : " + error, Toast.LENGTH_LONG).show();
+                        Toast.makeText(EventActivity.this, "Error : " + error, Toast.LENGTH_LONG).show();
                     }
                 }
             });
         }
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private void sendToLogin() {
+        Intent loginIntent = new Intent(EventActivity.this,LoginActivity.class);
+        startActivity(loginIntent);
+        finish();
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_container,fragment);
+        fragmentTransaction.commit();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -132,28 +137,14 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_setting_btn:
-                Intent settingsIntent = new Intent(MainActivity.this,SetupActivity.class);
+                Intent settingsIntent = new Intent(EventActivity.this,SetupActivity.class);
                 startActivity(settingsIntent);
                 return true;
-
+            case R.id.action_add_post:
+                startActivity(new Intent(EventActivity.this,PostActivity.class));
+                finish();
             default:
                 return false;
         }
-    }
-
-    private void logOut()   {
-        mAuth.signOut();
-        sendToLogin();
-    }
-    private void sendToLogin() {
-        Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
-        startActivity(loginIntent);
-        finish();
-    }
-
-    private void replaceFragment(Fragment fragment){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_container,fragment);
-        fragmentTransaction.commit();
     }
 }

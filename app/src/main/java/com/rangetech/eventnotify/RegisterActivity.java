@@ -94,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendToMain() {
-        Intent mainIntent = new Intent(RegisterActivity.this,MainActivity.class);
+        Intent mainIntent = new Intent(RegisterActivity.this, EventActivity.class);
         startActivity(mainIntent);
         finish();
     }
