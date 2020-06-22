@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="?attr/colorAccent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
             <FrameLayout
@@ -33,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:src="@drawable/ic_cover"
                     android:layout_height="180dp"
-                    android:alpha="0.6"
+                    android:alpha="0.5"
                     android:scaleType="centerCrop"/>
             </FrameLayout>
             <androidx.appcompat.widget.Toolbar
@@ -47,7 +47,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_q_r_code" />
+    <include layout="@layout/content_details" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -55,16 +55,15 @@
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:maxLines="1"
         android:elevation="0dp"
-        
-        android:padding="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:background="@color/bg_color"
+        android:background="@color/colorPrimary"
         android:drawableStart="@drawable/ic_date"
         android:drawableTint="@color/text_color"
         android:textColor="@color/text_color"
         android:id="@+id/dated"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+
         android:layout_marginBottom="56dp"
         >
         ></Button>
@@ -75,15 +74,15 @@
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:maxLines="1"
         android:elevation="0dp"
-        android:padding="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:background="@color/bg_color"
+        android:background="@color/colorPrimary"
         android:drawableStart="@drawable/ic_location_on_black_24dp"
         android:drawableTint="@color/text_color"
         android:textColor="@color/text_color"
         android:id="@+id/located"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+
         >
         ></Button>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -95,7 +94,7 @@
         app:layout_anchorGravity="bottom|end"
         android:backgroundTint="@color/action_color"
         app:srcCompat="@drawable/ic_bookmark"
-        android:tint="@color/colorPrimary"/>
+        android:tint="@color/white"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/event_fab_remove"
         android:layout_width="wrap_content"
@@ -104,6 +103,20 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         android:backgroundTint="@color/red"
-        app:srcCompat="@drawable/ic_cancel"
-        android:tint="@color/colorPrimary"/>
+        app:srcCompat="@drawable/ic_delete"
+        android:tint="@color/white"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/event_fab_qr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end"
+        android:backgroundTint="@color/action_color"
+        app:srcCompat="@drawable/ic_qr"
+        android:tint="@color/white"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

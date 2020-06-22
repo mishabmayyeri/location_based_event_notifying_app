@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +14,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -44,6 +47,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -68,7 +72,9 @@ public class PostActivity extends AppCompatActivity {
     private ProgressBar newPostProgress;
     private String current_user_id;
     private Bitmap compressedImageFile;
-
+    private DatePickerDialog.OnDateSetListener dateSetListener;
+    private String eventTime;
+    private CheckBox dateofCompletionCheckbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +89,6 @@ public class PostActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         current_user_id = firebaseAuth.getCurrentUser().getUid();
-
         mDatabase = FirebaseStorage.getInstance().getReference().child("Event");
 
         mSelectImage = findViewById(R.id.imageSelect);
@@ -91,14 +96,16 @@ public class PostActivity extends AppCompatActivity {
         mPostDesc = findViewById(R.id.descField);
         mSubmitBtn = findViewById(R.id.submitBtn);
         newPostProgress = findViewById(R.id.new_post_progress);
+        dateofCompletionCheckbox=findViewById(R.id.timeField);
+
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
-                        .setMinCropResultSize(360,240)
-                        .setAspectRatio(1,1)
+                        .setMinCropResultSize(360, 240)
+                        .setAspectRatio(1, 1)
                         .start(PostActivity.this);
 
 
@@ -142,7 +149,49 @@ public class PostActivity extends AppCompatActivity {
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
+
+
+        dateofCompletionCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dateofCompletionCheckbox.setChecked(false);
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(
+                        PostActivity.this,
+                        dateSetListener,
+                        year, month, day
+                );
+                dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 10);
+                dialog.show();
+            }
+        });
+
+        dateSetListener = (datePicker, year, month, day) -> {
+
+            month = month + 1;
+            if (month < 10) {
+                eventTime = day + "-" + "0" + month + "-" + year;
+                dateofCompletionCheckbox.setText(eventTime);
+                dateofCompletionCheckbox.setChecked(true);
+            } else {
+                eventTime = day + "-" + month + "-" + year;
+                dateofCompletionCheckbox.setText(eventTime);
+                dateofCompletionCheckbox.setChecked(true);
+            }
+
+        };
+
+
+
     }
+
+
 
 
     private void startPosting() {
@@ -199,6 +248,7 @@ public class PostActivity extends AppCompatActivity {
                                         postMap.put("user_id", current_user_id);
                                         postMap.put("timestamp", FieldValue.serverTimestamp());
                                         postMap.put("album_id",album_id);
+                                        postMap.put("event_date",eventTime);
 
                                         firebaseFirestore.collection("Posts")
                                                 .document(album_id)

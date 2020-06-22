@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PostActivity">
+    tools:context=".PostActivity"
+
+    >
 
     <ImageButton
         android:id="@+id/imageSelect"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
         android:adjustViewBounds="true"
         android:background="#00FFFFFF"
         android:scaleType="centerCrop"
@@ -24,11 +27,10 @@
     <EditText
         android:id="@+id/titleField"
         android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:layout_margin="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/input_outline"
         android:ems="10"
         android:hint="Event Title..."
@@ -43,10 +45,10 @@
     <EditText
         android:id="@+id/descField"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/input_outline"
         android:ems="10"
         android:gravity="start|top"
@@ -58,18 +60,34 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleField" />
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/timeField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Event Date"
+        android:inputType="date"
+        android:padding="8dp"
+        android:textAlignment="viewStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descField" />
 
     <fragment
         android:id="@+id/autocomplete_fragment"
         android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="436dp"
-        android:layout_marginBottom="147dp"
-        app:layout_constraintBottom_toTopOf="@+id/submitBtn"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/timeField"/>
 
     <Button
         android:id="@+id/submitBtn"

@@ -58,8 +58,9 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                         if(task.isSuccessful()){
                             final String desc_data = task.getResult().getString("title");
                             final String image_url = task.getResult().getString("image_url");
-                            String user_id =  task.getResult().getString("user_id");
+                            final String user_id =  task.getResult().getString("user_id");
                             final String details=task.getResult().getString("desc");
+
                             firebaseFirestoreUsers.collection("Users").document(user_id).get()
                                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                            @Override
@@ -80,6 +81,7 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                                 Date timestamp=task.getResult().getDate("timestamp");
                                 long millisecond=timestamp.getTime();
                                 dateString= new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
+                                dateString=task.getResult().getString("event_date");
                                 holder.setTime(dateString);
 
                             }catch (NullPointerException e){
@@ -94,6 +96,7 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                                         displayIntent.putExtra("EventDetails",details);
                                         displayIntent.putExtra("EventCover",image_url);
                                         displayIntent.putExtra("EventDate", finalDateString);
+                                        displayIntent.putExtra("UserID",user_id);
                                         displayIntent.putExtra("AlbumId",event_list.get(position).getAlbum_id());
                                         displayIntent.putExtra("EventLocation","SOE , CUSAT");
                                         context.startActivity(displayIntent);

@@ -59,7 +59,6 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                 if (task.isSuccessful()){
                     String userName = task.getResult().getString("name");
                     String userImage = task.getResult().getString("image");
-
                     holder.setUserData(userName,userImage);
                 } else {
 
@@ -70,7 +69,8 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
         try {
             long millisecond = event_list.get(position).getTimestamp().getTime();
              dateString= new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
-            holder.setTime(dateString);
+             dateString=event_list.get(position).getEvent_date();
+             holder.setTime(dateString);
 
         }catch (NullPointerException e){
             e.printStackTrace();
@@ -86,6 +86,7 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                 displayIntent.putExtra("EventCover",image_url);
                 displayIntent.putExtra("EventDate", finalDateString);
                 displayIntent.putExtra("AlbumId",event_list.get(position).getAlbum_id());
+                displayIntent.putExtra("UserID",event_list.get(position).getUser_id());
                 displayIntent.putExtra("EventLocation","SOE , CUSAT");
                 context.startActivity(displayIntent);
             }

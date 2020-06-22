@@ -9,5 +9,5 @@
     <item
         android:id="@+id/bottom_action_my_events"
         android:icon="@drawable/ic_event_available_black_24dp"
-        android:title="My Events" />
+        android:title="Saved Events" />
     </menu>

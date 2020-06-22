@@ -142,7 +142,10 @@ public class EventActivity extends AppCompatActivity {
                 return true;
             case R.id.action_add_post:
                 startActivity(new Intent(EventActivity.this,PostActivity.class));
-                finish();
+                return true;
+            case R.id.action_qr_code:
+                startActivity(new Intent(EventActivity.this,QRCodeActivityReader.class));
+
             default:
                 return false;
         }

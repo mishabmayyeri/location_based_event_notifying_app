@@ -25,4 +25,10 @@
         app:showAsAction="withText"
 
         />
+    <item
+        android:id="@+id/action_qr_code"
+        android:title="@string/action_qr_code_reader"
+        app:showAsAction="withText"
+
+        />
 </menu>

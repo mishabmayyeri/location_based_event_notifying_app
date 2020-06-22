@@ -47,13 +47,14 @@ public class EventDisplayActivity extends AppCompatActivity {
     private Button eventLocationBtn;
     private Button eventDateBtn;
     private ImageView eventCoverImageView;
-    private FloatingActionButton eventFab,eventFabRemove;
+    private FloatingActionButton eventFab,eventFabRemove,eventQRFab;
     private Toolbar toolbar;
     private FirebaseAuth firebaseAuth;
     private String currentUser;
     private String album_id;
     private FirebaseFirestore rootRef;
     private DocumentReference docIdRef;
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class EventDisplayActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         firebaseAuth = FirebaseAuth.getInstance();
         eventFabRemove=findViewById(R.id.event_fab_remove);
-
+        eventQRFab=findViewById(R.id.event_fab_qr);
         eventName = getIntent().getStringExtra("EventName");
         eventLocation = getIntent().getStringExtra("EventLocation");
         eventDetails = getIntent().getStringExtra("EventDetails");
@@ -77,6 +78,7 @@ public class EventDisplayActivity extends AppCompatActivity {
         currentUser = firebaseAuth.getCurrentUser().getUid();
         album_id=getIntent().getStringExtra("AlbumId");
         rootRef = FirebaseFirestore.getInstance();
+        userID=getIntent().getStringExtra("UserID");
     }
 
     @Override
@@ -106,10 +108,30 @@ public class EventDisplayActivity extends AppCompatActivity {
 
                         eventFab.setVisibility(View.INVISIBLE);
                         eventFabRemove.setVisibility(View.VISIBLE);
+                        eventQRFab.setVisibility(View.VISIBLE);
+
+                        eventQRFab.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(userID.contentEquals(currentUser)) {
+                                    Intent qrCodeReader = new Intent(EventDisplayActivity.this, QRCodeActivityReader.class);
+                                    qrCodeReader.putExtra("data", album_id);
+                                    startActivity(qrCodeReader);
+                                }else{
+                                    Intent qrCodeReader = new Intent(EventDisplayActivity.this, QRcode.class);
+                                    qrCodeReader.putExtra("data", currentUser);
+                                    startActivity(qrCodeReader);
+
+                                }
+                            }
+                        });
+
+
+
                         eventFabRemove.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(EventDisplayActivity.this)
+                                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(EventDisplayActivity.this,R.style.AppTheme)
                                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                         .setTitle("Remove ?")
                                         .setIcon(R.drawable.ic_warning_black_24dp)
@@ -120,6 +142,7 @@ public class EventDisplayActivity extends AppCompatActivity {
                                                 new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(final DialogInterface dialog, int which) {
+
                                                         docIdRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
@@ -150,6 +173,7 @@ public class EventDisplayActivity extends AppCompatActivity {
                         Log.i(EVENT_DISPLAY, "Document does not exist!");
                         eventFab.setVisibility(View.VISIBLE);
                         eventFabRemove.setVisibility(View.INVISIBLE);
+                        eventQRFab.setVisibility(View.INVISIBLE);
                         eventFab.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

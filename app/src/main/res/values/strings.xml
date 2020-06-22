@@ -116,5 +116,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_q_r_code">QRCode</string>
     <string name="action_new_event">New Event</string>
+    <string name="please_show_this_qr_code_to_verify_your_entry_to_the_event">Please show this QR Code to verify your Entry to the Event</string>
+    <string name="action_qr_code_reader">QR Code Reader</string>
 
 </resources>

@@ -15,10 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".QRCodeActivityReader"></activity>
+        <activity android:name=".QRcode" />
         <activity
             android:name=".EventDisplayActivity"
             android:label="@string/title_activity_q_r_code"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".EventActivity"
             android:label="@string/title_activity_events_avtivity"
@@ -40,7 +42,8 @@
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".PostActivity"
-            android:parentActivityName=".EventActivity" />
+            android:parentActivityName=".EventActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
 
         <meta-data
             android:name="preloaded_fonts"

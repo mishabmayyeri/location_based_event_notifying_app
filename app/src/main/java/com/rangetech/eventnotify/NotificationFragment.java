@@ -43,7 +43,6 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
-
         event_list = new ArrayList<>();
         event_list_view = view.findViewById(R.id.event_list_view);
         firebaseAuth = FirebaseAuth.getInstance();

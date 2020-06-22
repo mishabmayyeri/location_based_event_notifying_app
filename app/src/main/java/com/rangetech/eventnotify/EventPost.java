@@ -4,21 +4,21 @@ package com.rangetech.eventnotify;
 import java.util.Date;
 
 public class EventPost {
-    public String user_id,image_url,desc,thumb,title,album_id;
+    public String user_id,image_url,desc,thumb,title,album_id,event_date;
     public Date timestamp;
 
     public EventPost() {}
 
-    public EventPost(String user_id, String image_url,
-                     String desc, String thumb, String title,
-                     String album_id, Date timestamp) {
-
+    public EventPost(String user_id, String image_url, String desc,
+                     String thumb, String title,
+                     String album_id, String event_date, Date timestamp) {
         this.user_id = user_id;
         this.image_url = image_url;
         this.desc = desc;
         this.thumb = thumb;
         this.title = title;
         this.album_id = album_id;
+        this.event_date = event_date;
         this.timestamp = timestamp;
     }
 
@@ -68,6 +68,14 @@ public class EventPost {
 
     public void setAlbum_id(String album_id) {
         this.album_id = album_id;
+    }
+
+    public String getEvent_date() {
+        return event_date;
+    }
+
+    public void setEvent_date(String event_date) {
+        this.event_date = event_date;
     }
 
     public Date getTimestamp() {
