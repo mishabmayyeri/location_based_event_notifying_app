@@ -1,27 +1,16 @@
 <resources>
     <string name="app_name">EventNotify</string>
-    <string name="email_hint">Your Email...</string>
-    <string name="pass_hint">Password...</string>
     <string name="action_search_text">Search</string>
     <string name="action_setting_text">Account Settings</string>
     <string name="action_logout_text">Logout</string>
-    <string name="reg_btn_text">Create new Account</string>
-    <string name="confirm_pass_hint">Confirm Password...</string>
-    <string name="bottom_home_text">Home</string>
-    <string name="bottom_notification_text">Notification</string>
-    <string name="bottom_account_text">Account</string>
-    <string name="api_key">AIzaSyAHaK6AsVDUaV-Ql7sa_iZxvlGUqEPAtOY</string>
+    <string name="api_key2">AIzaSyCRFxbzp3bIHkH-KHruM4cAAW-zsOS-150</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="log_in"><b>Log in</b></string>
     <string name="register">Register</string>
     <string name="register2">Register</string>
     <string name="register3">Already Registered</string>
     <string name="dhishna_tec">Dhishna Tech Fest 2020</string>
     <string name="soe_cusat">SOE , CUSAT</string>
-    <string name="date">19 .1 .2020</string>
-    <string name="events">Events</string>
-    <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</string>
     <string name="event_date">20.10.2020</string>
     <string name="title_activity_events_avtivity">EventsAvtivity</string>
     <string name="large_text">
@@ -113,7 +102,6 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_q_r_code">QRCode</string>
     <string name="action_new_event">New Event</string>
     <string name="please_show_this_qr_code_to_verify_your_entry_to_the_event">Please show this QR Code to verify your Entry to the Event</string>

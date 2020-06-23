@@ -97,78 +97,84 @@ public class EventDisplayActivity extends AppCompatActivity {
                 .document(currentUser)
                 .collection("MyEvents")
                 .document(album_id);
-
         docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull final Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+
                         Log.i(EVENT_DISPLAY, "Document exists!");
 
-                        eventFab.setVisibility(View.INVISIBLE);
-                        eventFabRemove.setVisibility(View.VISIBLE);
-                        eventQRFab.setVisibility(View.VISIBLE);
+                        if(task.getResult().getString("participated").contentEquals("no")) {
 
-                        eventQRFab.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if(userID.contentEquals(currentUser)) {
-                                    Intent qrCodeReader = new Intent(EventDisplayActivity.this, QRCodeActivityReader.class);
-                                    qrCodeReader.putExtra("data", album_id);
-                                    startActivity(qrCodeReader);
-                                }else{
-                                    Intent qrCodeReader = new Intent(EventDisplayActivity.this, QRcode.class);
-                                    qrCodeReader.putExtra("data", currentUser);
-                                    startActivity(qrCodeReader);
+                            eventFab.setVisibility(View.INVISIBLE);
+                            eventFabRemove.setVisibility(View.VISIBLE);
+                            eventQRFab.setVisibility(View.VISIBLE);
 
+                            eventQRFab.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (userID.contentEquals(currentUser)) {
+                                        Intent qrCodeReader = new Intent(EventDisplayActivity.this, QRCodeActivityReader.class);
+                                        qrCodeReader.putExtra("data", album_id);
+                                        startActivity(qrCodeReader);
+                                    } else {
+                                        Intent qrCodeReader = new Intent(EventDisplayActivity.this, QRcode.class);
+                                        qrCodeReader.putExtra("data", currentUser);
+                                        startActivity(qrCodeReader);
+
+                                    }
                                 }
-                            }
-                        });
+                            });
 
 
+                            eventFabRemove.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(EventDisplayActivity.this, R.style.AppTheme)
+                                            .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                            .setTitle("Remove ?")
+                                            .setIcon(R.drawable.ic_warning_black_24dp)
+                                            .setMessage("Are you sure you want to remove this event.")
+                                            .setCancelable(false)
+                                            .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(final DialogInterface dialog, int which) {
 
-                        eventFabRemove.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(EventDisplayActivity.this,R.style.AppTheme)
-                                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                        .setTitle("Remove ?")
-                                        .setIcon(R.drawable.ic_warning_black_24dp)
-                                        .setMessage("Are you sure you want to remove this event.")
-                                        .setCancelable(false)
-                                        .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(final DialogInterface dialog, int which) {
+                                                            docIdRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        Toast.makeText(getApplicationContext(), "Removed this event", Toast.LENGTH_SHORT).show();
+                                                                        dialog.dismiss();
+                                                                        onStart();
 
-                                                        docIdRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                if(task.isSuccessful()){
-                                                                    Toast.makeText(getApplicationContext(),"Removed this event",Toast.LENGTH_SHORT).show();
-                                                                    dialog.dismiss();
-                                                                    onStart();
-
-                                                                }   else{
-                                                                    Log.i(EVENT_DISPLAY,task.getException().getMessage());
+                                                                    } else {
+                                                                        Log.i(EVENT_DISPLAY, task.getException().getMessage());
+                                                                    }
                                                                 }
-                                                            }
-                                                        });
+                                                            });
 
-                                                    }
-                                                }).addButton("    CANCEL   ", Color.parseColor("#3e3d63"), Color.parseColor("#e0e0e0"), CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-                                builder.show();
-                            }
-                        });
+                                                        }
+                                                    }).addButton("    CANCEL   ", Color.parseColor("#3e3d63"), Color.parseColor("#e0e0e0"), CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                    builder.show();
+                                }
+                            });
+                        }else{
+                            eventFab.setVisibility(View.INVISIBLE);
+                            eventFabRemove.setVisibility(View.INVISIBLE);
+                            eventQRFab.setVisibility(View.INVISIBLE);
+                        }
                     } else {
                         Log.i(EVENT_DISPLAY, "Document does not exist!");
                         eventFab.setVisibility(View.VISIBLE);
@@ -179,6 +185,7 @@ public class EventDisplayActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 Map<String, Object> postMap = new HashMap<>();
                                 postMap.put("album_id",album_id);
+                                postMap.put("participated","no");
                                 FirebaseFirestore.getInstance().collection("Users")
                                         .document(currentUser)
                                         .collection("MyEvents")

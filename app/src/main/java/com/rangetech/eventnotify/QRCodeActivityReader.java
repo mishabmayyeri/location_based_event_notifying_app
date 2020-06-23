@@ -21,7 +21,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import info.androidhive.barcode.BarcodeReader;
 
 public class QRCodeActivityReader extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
@@ -83,8 +86,10 @@ public class QRCodeActivityReader extends AppCompatActivity implements BarcodeRe
 
                                                     if (document.exists()) {
                                                         Log.i(QR_CODE_, "Document exists!");
-
-                                                        docIdRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        Map<String, Object> postMap = new HashMap<>();
+                                                        postMap.put("participated","yes");
+                                                        docIdRef.update(postMap)
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                 if(task.isSuccessful()){

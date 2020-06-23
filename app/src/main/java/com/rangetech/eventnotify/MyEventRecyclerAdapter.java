@@ -47,47 +47,49 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        String event_id=event_list.get(position).getAlbum_id();
+        try {
+            String event_id=event_list.get(position).getAlbum_id();
+            String participated=event_list.get(position).getParticipated();
+            firebaseFirestore.collection("Posts")
+                    .document(event_id)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                final String desc_data = task.getResult().getString("title");
+                                final String image_url = task.getResult().getString("image_url");
+                                final String user_id =  task.getResult().getString("user_id");
+                                final String details=task.getResult().getString("desc");
+                                final String locationName=task.getResult().getString("location_name");
 
-        firebaseFirestore.collection("Posts")
-                .document(event_id)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            final String desc_data = task.getResult().getString("title");
-                            final String image_url = task.getResult().getString("image_url");
-                            final String user_id =  task.getResult().getString("user_id");
-                            final String details=task.getResult().getString("desc");
+                                firebaseFirestoreUsers.collection("Users").document(user_id).get()
+                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()){
+                                                    String userName = task.getResult().getString("name");
+                                                    String userImage = task.getResult().getString("image");
+                                                    holder.setUserData(userName,userImage);
+                                                } else {
 
-                            firebaseFirestoreUsers.collection("Users").document(user_id).get()
-                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                           @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()){
-                                    String userName = task.getResult().getString("name");
-                                    String userImage = task.getResult().getString("image");
-                                    holder.setUserData(userName,userImage);
-                                } else {
+                                                }
+                                            }
 
+                                        });
+
+                                String dateString = "";
+                                try {
+                                    Date timestamp=task.getResult().getDate("timestamp");
+                                    long millisecond=timestamp.getTime();
+                                    dateString= new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
+                                    dateString=task.getResult().getString("event_date");
+                                    holder.setTime(dateString);
+
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
                                 }
-                            }
-
-                        });
-
-                            String dateString = "";
-                            try {
-                                Date timestamp=task.getResult().getDate("timestamp");
-                                long millisecond=timestamp.getTime();
-                                dateString= new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
-                                dateString=task.getResult().getString("event_date");
-                                holder.setTime(dateString);
-
-                            }catch (NullPointerException e){
-                                e.printStackTrace();
-                            }
-                            final String finalDateString = dateString;
+                                final String finalDateString = dateString;
                                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -98,15 +100,26 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                                         displayIntent.putExtra("EventDate", finalDateString);
                                         displayIntent.putExtra("UserID",user_id);
                                         displayIntent.putExtra("AlbumId",event_list.get(position).getAlbum_id());
-                                        displayIntent.putExtra("EventLocation","SOE , CUSAT");
+                                        displayIntent.putExtra("EventLocation",locationName);
                                         context.startActivity(displayIntent);
                                     }
                                 });
-                            holder.setTitleText(desc_data);
-                            holder.setEventImage(image_url);
+                                holder.setTitleText(desc_data);
+                                holder.setEventImage(image_url);
+                                holder.setLocationText(locationName);
+                                holder.setDetails(details);
+
+                            }
                         }
-                    }
-                });
+                    });
+            if(participated.contentEquals("yes")){
+                holder.setParticipated(true);
+            }else{
+                holder.setParticipated(false);
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -124,6 +137,8 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
         private TextView eventDate;
         private TextView eventUserName;
         private CircleImageView eventUserImage;
+        private TextView textViewLocation;
+        private TextView detailsText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -143,6 +158,17 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
             eventDate = mView.findViewById(R.id.event_date);
             eventDate.setText(date);
         }
+        public void setParticipated(Boolean val) {
+            if (val) {
+                mView.findViewById(R.id.event_participated).setVisibility(View.VISIBLE);
+            } else {
+                mView.findViewById(R.id.event_participated).setVisibility(View.INVISIBLE);
+            }
+        }
+            public void setLocationText(String locationName){
+            textViewLocation=mView.findViewById(R.id.location);
+            textViewLocation.setText(locationName);
+        }
         public void setUserData(String name , String image) {
             eventUserImage = mView.findViewById(R.id.event_user_image);
             eventUserName = mView.findViewById(R.id.event_user_name);
@@ -150,6 +176,11 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.placeholder(R.drawable.ellipse);
             Glide.with(context).applyDefaultRequestOptions(placeholderOption).load(image).into(eventUserImage);
+        }
+
+        public void setDetails(String details) {
+            detailsText=mView.findViewById(R.id.desc);
+            detailsText.setText(details);
         }
     }
 }

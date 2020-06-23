@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_search_btn"
         android:icon="@drawable/baseline_search_white_24"
         android:title="@string/action_search_text"
         android:iconTint="@color/greyColour"

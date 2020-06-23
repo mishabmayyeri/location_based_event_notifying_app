@@ -75,6 +75,9 @@ public class PostActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener dateSetListener;
     private String eventTime;
     private CheckBox dateofCompletionCheckbox;
+    private String placeLong="";
+    private String placeLat="";
+    private String placeName="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +122,7 @@ public class PostActivity extends AppCompatActivity {
             }
         });
         mProgress = new ProgressDialog(this);
-        String apiKey = getString(R.string.api_key);
+        String apiKey = getString(R.string.api_key2);
 
         /**
          * Initialize Places. For simplicity, the API key is hard-coded. In a production
@@ -134,13 +137,17 @@ public class PostActivity extends AppCompatActivity {
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG));
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId()+",  LAT LONG"+place.getLatLng().latitude +","+place.getLatLng().longitude);
+                placeName=place.getName();
+                placeLat=place.getLatLng().latitude+"";
+                placeLong=place.getLatLng().longitude+"";
+
             }
 
             @Override
@@ -202,6 +209,7 @@ public class PostActivity extends AppCompatActivity {
         final String desc_val = mPostDesc.getText().toString();
 
         if (!TextUtils.isEmpty(title_val) && !TextUtils.isEmpty(desc_val) && mImageUri != null){
+
             newPostProgress.setVisibility(View.VISIBLE);
             final String randomName = UUID.randomUUID().toString();
             final StorageReference filepath = storageReference.child("event_images").child(randomName + ".jpg");
@@ -249,6 +257,10 @@ public class PostActivity extends AppCompatActivity {
                                         postMap.put("timestamp", FieldValue.serverTimestamp());
                                         postMap.put("album_id",album_id);
                                         postMap.put("event_date",eventTime);
+                                        postMap.put("location_name",placeName);
+                                        postMap.put("location_lat",placeLat);
+                                        postMap.put("location_long",placeLong);
+                                        postMap.put("participated","no");
 
                                         firebaseFirestore.collection("Posts")
                                                 .document(album_id)
