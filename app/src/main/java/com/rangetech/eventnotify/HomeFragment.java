@@ -56,6 +56,8 @@ public class HomeFragment extends Fragment {
     private ProgressBar progressBar;
     private final static int ALL_PERMISSIONS_RESULT = 101;
     LocationTrack locationTrack;
+    private double longitude=000000;
+    private double latitude=000000;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -118,7 +120,6 @@ public class HomeFragment extends Fragment {
                                 EventPost eventPost = doc.getDocument().toObject(EventPost.class);
                                 event_list.add(eventPost);
                                 eventRecyclerAdapter.notifyDataSetChanged();
-
                             }
                         }
                     }catch (NullPointerException e1){
@@ -138,11 +139,11 @@ public class HomeFragment extends Fragment {
 
         if (locationTrack.canGetLocation()) {
 
-            double longitude = locationTrack.getLongitude();
-            double latitude = locationTrack.getLatitude();
+             longitude = locationTrack.getLongitude();
+             latitude = locationTrack.getLatitude();
 
             if ((int) longitude == 0 && (int) latitude == 0) {
-                getLocation();
+
             }else {
                 Log.d("Event_Notify_Loc", latitude + "," + longitude);
                 SharedPreferences sharedPreferences =getContext().getSharedPreferences("LOCATION.pref", Context.MODE_PRIVATE);

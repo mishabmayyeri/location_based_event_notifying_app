@@ -132,21 +132,11 @@ public class EventActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_logout_btn:
-                logOut();
-                return true;
-
             case R.id.action_setting_btn:
                 Intent settingsIntent = new Intent(EventActivity.this,SetupActivity.class);
                 startActivity(settingsIntent);
                 return true;
-            case R.id.action_add_post:
-                startActivity(new Intent(EventActivity.this,PostActivity.class));
-                return true;
-            case R.id.action_qr_code:
-                startActivity(new Intent(EventActivity.this,QRCodeActivityReader.class));
-
-            default:
+                default:
                 return false;
         }
     }
