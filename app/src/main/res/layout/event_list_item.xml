@@ -57,7 +57,8 @@
             android:layout_below="@+id/event_title"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/ic_my_location_black_24dp" />
+            android:backgroundTint="@color/white"
+            android:background="@drawable/ic_location_on_black_24dp" />
 
         <TextView
             android:id="@+id/location"
@@ -70,6 +71,7 @@
             android:maxLines="1"
             android:layout_marginTop="12dp"
             android:text="@string/soe_cusat"
+            android:ellipsize="end"
             android:textSize="12sp" />
 
         <Button
@@ -128,6 +130,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="0dp"
+            android:id="@+id/event_participated_img"
             android:foregroundTint="@color/white"
             android:src="@drawable/ic_check" />
 

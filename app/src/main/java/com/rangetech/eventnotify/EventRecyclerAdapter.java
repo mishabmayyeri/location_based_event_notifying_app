@@ -67,7 +67,9 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
 
             LocationDistanceCalculator locationDistanceCalculator = new LocationDistanceCalculator();
             Double val = locationDistanceCalculator.getDistance(my_lati, my_longi, loc_lat, loc_long);
-            String distance = val + "";
+            val=val/1000;
+            int value = (int) Math.round(val);
+            String distance = value + "";
 
             final String location_details = event_list.get(position).getLocation_name();
             holder.setLocationText(location_details, distance);
@@ -156,7 +158,7 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
         }
         public void setLocationText(String locationName,String dist){
            textViewLocation=mView.findViewById(R.id.location);
-           textViewLocation.setText(locationName+" "+dist+"m");
+           textViewLocation.setText(locationName+" "+dist+" km away");
         }
         public void setEventImage(String downloadUri) {
             eventImageView = mView.findViewById(R.id.event_image);

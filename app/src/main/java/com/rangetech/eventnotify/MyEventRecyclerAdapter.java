@@ -19,7 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecyclerAdapter.ViewHolder> {
 
+    private static final String MY_EVENTS = "My Events";
     public List<EventPost> event_list;
     public Context context;
 
@@ -86,7 +89,15 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                                     dateString=task.getResult().getString("event_date");
                                     holder.setTime(dateString);
 
-                                }catch (NullPointerException e){
+                                    CheckExpiry checkExpiry=new CheckExpiry(dateString,position);
+                                    if(checkExpiry.isExpired()){
+                                        if(participated.contentEquals("no")){
+                                            holder.setExpired(false);
+                                        }
+                                    }
+
+
+                                }catch (NullPointerException | ParseException e){
                                     e.printStackTrace();
                                 }
                                 final String finalDateString = dateString;
@@ -165,6 +176,7 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                 mView.findViewById(R.id.event_participated).setVisibility(View.INVISIBLE);
             }
         }
+
             public void setLocationText(String locationName){
             textViewLocation=mView.findViewById(R.id.location);
             textViewLocation.setText(locationName);
@@ -176,6 +188,19 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.placeholder(R.drawable.ellipse);
             Glide.with(context).applyDefaultRequestOptions(placeholderOption).load(image).into(eventUserImage);
+        }
+
+        public void setExpired(boolean participated){
+           if(!participated) {
+               mView.findViewById(R.id.event_participated).setVisibility(View.VISIBLE);
+               ImageView img=mView.findViewById(R.id.event_participated_img);
+               RequestOptions placeholderOption = new RequestOptions();
+               placeholderOption.placeholder(R.drawable.rectangle);
+               Glide.with(context)
+                       .applyDefaultRequestOptions(placeholderOption)
+                       .load(R.drawable.ic_expired)
+                       .into(img);
+           }
         }
 
         public void setDetails(String details) {

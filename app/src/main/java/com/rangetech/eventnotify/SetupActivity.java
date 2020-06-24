@@ -71,6 +71,15 @@ public class SetupActivity extends AppCompatActivity {
         user_id = firebaseAuth.getCurrentUser().getUid();
 
         setupBtn.setEnabled(false);
+        findViewById(R.id.logout_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                finishAffinity();
+                startActivity(new Intent(SetupActivity.this,EventActivity.class));
+
+            }
+        });
         setupProgress.setVisibility(View.VISIBLE);
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -83,8 +92,9 @@ public class SetupActivity extends AppCompatActivity {
                      mainImageURI = Uri.parse(image);
                      setupName.setText(name);
                      RequestOptions placeholderRequest = new RequestOptions();
-                     placeholderRequest.placeholder(R.drawable.default_image);
-                     Glide.with(SetupActivity.this).setDefaultRequestOptions(placeholderRequest).load(image).into(setupImage);
+                     placeholderRequest.placeholder(R.drawable.ic_account);
+                     Glide.with(SetupActivity.this)
+                             .setDefaultRequestOptions(placeholderRequest).load(image).into(setupImage);
                  }
              } else {
                  String error = task.getException().getMessage();
@@ -102,7 +112,6 @@ public class SetupActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(user_name)) {
                     setupProgress.setVisibility(View.VISIBLE);
                     if (isChanged) {
-
                         user_id = firebaseAuth.getCurrentUser().getUid();
                         final StorageReference image_path = storageReference.child("profile_images").child(user_id + ".jpg");
                         image_path.putFile(mainImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -120,6 +129,8 @@ public class SetupActivity extends AppCompatActivity {
                     } else {
                         storeFirestore(user_name,null);
                     }
+                }else{
+                    Toast.makeText(getApplicationContext(),"Please write your name and upload a profile_pic",Toast.LENGTH_SHORT).show();
                 }
             }
         });

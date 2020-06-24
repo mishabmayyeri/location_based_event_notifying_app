@@ -30,6 +30,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +58,7 @@ public class EventDisplayActivity extends AppCompatActivity {
     private FirebaseFirestore rootRef;
     private DocumentReference docIdRef;
     private String userID;
+    private boolean expired=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,16 @@ public class EventDisplayActivity extends AppCompatActivity {
         album_id=getIntent().getStringExtra("AlbumId");
         rootRef = FirebaseFirestore.getInstance();
         userID=getIntent().getStringExtra("UserID");
+
+        CheckExpiry checkExpiry=new CheckExpiry(eventDate,0);
+        try {
+            if(checkExpiry.isExpired()==true){
+                expired=true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -88,7 +102,10 @@ public class EventDisplayActivity extends AppCompatActivity {
                 .load(eventCover)
                 .into(eventCoverImageView);
         eventDetailsTxt.setText(eventDetails);
-        eventDateBtn.setText(eventDate);
+        if(expired) {
+            eventDateBtn.setText(eventDate+" (expired!)");
+            eventDateBtn.setBackgroundColor(getColor(R.color.red));
+        }
         eventLocationBtn.setText(eventLocation);
         toolbar.setTitle("" + eventName);
         setSupportActionBar(toolbar);
@@ -106,7 +123,7 @@ public class EventDisplayActivity extends AppCompatActivity {
 
                         Log.i(EVENT_DISPLAY, "Document exists!");
 
-                        if(task.getResult().getString("participated").contentEquals("no")) {
+                        if(task.getResult().getString("participated").contentEquals("no")&&!expired) {
 
                             eventFab.setVisibility(View.INVISIBLE);
                             eventFabRemove.setVisibility(View.VISIBLE);

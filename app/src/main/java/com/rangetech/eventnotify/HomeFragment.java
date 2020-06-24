@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
+    public void onStart()  {
         super.onStart();
 
         if(firebaseAuth.getCurrentUser()!=null) {
@@ -112,14 +112,19 @@ public class HomeFragment extends Fragment {
             firstQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-                        if (doc.getType() == DocumentChange.Type.ADDED) {
-                            EventPost eventPost = doc.getDocument().toObject(EventPost.class);
-                            event_list.add(eventPost);
-                            eventRecyclerAdapter.notifyDataSetChanged();
+                    try {
+                        for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+                            if (doc.getType() == DocumentChange.Type.ADDED) {
+                                EventPost eventPost = doc.getDocument().toObject(EventPost.class);
+                                event_list.add(eventPost);
+                                eventRecyclerAdapter.notifyDataSetChanged();
 
+                            }
                         }
+                    }catch (NullPointerException e1){
+                        e1.printStackTrace();
                     }
+
 
                 }
             });

@@ -43,7 +43,7 @@
         <activity
             android:name=".PostActivity"
             android:parentActivityName=".EventActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <meta-data
             android:name="preloaded_fonts"

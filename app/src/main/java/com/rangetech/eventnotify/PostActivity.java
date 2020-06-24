@@ -202,14 +202,15 @@ public class PostActivity extends AppCompatActivity {
 
 
     private void startPosting() {
-        mProgress.setMessage("Posting to Blog...");
-        mProgress.show();
+
 
         final String title_val =  mPostTitle.getText().toString();
         final String desc_val = mPostDesc.getText().toString();
 
-        if (!TextUtils.isEmpty(title_val) && !TextUtils.isEmpty(desc_val) && mImageUri != null){
-
+        if (!TextUtils.isEmpty(title_val) && !TextUtils.isEmpty(desc_val) && mImageUri != null
+        &&placeLat!=null&&placeName!=null&&placeLong!=null&&eventTime!=null){
+            mProgress.setMessage("Posting to Blog...");
+            mProgress.show();
             newPostProgress.setVisibility(View.VISIBLE);
             final String randomName = UUID.randomUUID().toString();
             final StorageReference filepath = storageReference.child("event_images").child(randomName + ".jpg");
@@ -300,6 +301,8 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
 
+        }else{
+            Toast.makeText(getApplicationContext(),"Please fill up all forms",Toast.LENGTH_SHORT).show();
         }
     }
 

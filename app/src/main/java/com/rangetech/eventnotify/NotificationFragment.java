@@ -50,7 +50,10 @@ public class NotificationFragment extends Fragment {
         event_list_view = view.findViewById(R.id.event_list_view);
         firebaseAuth = FirebaseAuth.getInstance();
         eventRecyclerAdapter = new MyEventRecyclerAdapter(event_list);
-        event_list_view.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(container.getContext());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        event_list_view.setLayoutManager(linearLayoutManager);
         event_list_view.setAdapter(eventRecyclerAdapter);
         firebaseFirestore = FirebaseFirestore.getInstance();
 
@@ -74,7 +77,7 @@ public class NotificationFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
+    public void onResume()throws NullPointerException {
         super.onResume();
 
         event_list.clear();
@@ -88,15 +91,18 @@ public class NotificationFragment extends Fragment {
                     addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                            for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-                                if (doc.getType() == DocumentChange.Type.ADDED) {
-                                    EventPost eventPost = doc.getDocument().toObject(EventPost.class);
-                                    event_list.add(eventPost);
-                                    eventRecyclerAdapter.notifyDataSetChanged();
+                           try {
+                               for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+                                   if (doc.getType() == DocumentChange.Type.ADDED) {
+                                       EventPost eventPost = doc.getDocument().toObject(EventPost.class);
+                                       event_list.add(eventPost);
+                                       eventRecyclerAdapter.notifyDataSetChanged();
 
-                                }
-                            }
-
+                                   }
+                               }
+                           }catch (NullPointerException e1){
+                               e1.printStackTrace();
+                           }
                         }
                     });
         }
