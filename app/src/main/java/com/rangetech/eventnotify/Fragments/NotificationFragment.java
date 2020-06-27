@@ -26,10 +26,6 @@ import com.rangetech.eventnotify.R;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -62,8 +58,7 @@ public class NotificationFragment extends Fragment {
         event_list_view.setLayoutManager(linearLayoutManager);
         event_list_view.setAdapter(eventRecyclerAdapter);
         firebaseFirestore = FirebaseFirestore.getInstance();
-        event_list.clear();
-        return view;
+         return view;
     }
 
 
@@ -86,6 +81,7 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onResume()throws NullPointerException {
         super.onResume();
+        event_list.clear();
         if(firebaseAuth.getCurrentUser()!=null) {
             getActivity().findViewById(R.id.location_progress).setVisibility(View.VISIBLE);
             currentUser=firebaseAuth.getUid();
