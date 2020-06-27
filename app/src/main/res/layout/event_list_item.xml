@@ -124,6 +124,7 @@
             android:layout_alignParentTop="true"
             app:cardBackgroundColor="@color/white"
             android:layout_margin="16dp"
+            android:visibility="invisible"
             android:id="@+id/event_participated">
 
         <de.hdodenhof.circleimageview.CircleImageView

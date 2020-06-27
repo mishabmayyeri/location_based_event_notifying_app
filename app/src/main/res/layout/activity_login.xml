@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
+    tools:context=".Activities.LoginActivity"
     android:background="@color/bg_color"
     >
 
@@ -96,6 +96,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:text="Forgot Password"
+        android:visibility="invisible"
         android:textColor="@color/text_color" />
 
     <Button

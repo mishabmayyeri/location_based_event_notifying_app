@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/bg_color"
-    tools:context=".EventActivity">
+    tools:context=".Activities.EventActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -38,20 +38,43 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_events_activity" />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:layout_width="80dp"
+        android:indeterminateTint="@color/white"
+        android:id="@+id/location_progress"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_height="80dp"
+        app:layout_anchor="@id/app_bar"
+        android:visibility="invisible"
+        android:layout_margin="4dp"
+        app:layout_anchorGravity="bottom|end" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/event_location_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/action_color"
+        android:tint="@color/white"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_location_fab" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/event_refresh_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/action_color"
-        app:srcCompat="@drawable/ic_location_fab"
-        android:tint="@color/white"/>
-
+        android:tint="@color/white"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_refresh" />
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/mainBottomNav"
         android:layout_width="match_parent"
@@ -60,5 +83,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:layout_gravity="bottom"
-        app:menu="@menu/bottom_menu" />
+        app:menu="@menu/bottom_menu" >
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

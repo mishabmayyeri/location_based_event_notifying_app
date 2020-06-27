@@ -1,8 +1,7 @@
-package com.rangetech.eventnotify;
+package com.rangetech.eventnotify.Helpers;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +17,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.rangetech.eventnotify.Activities.EventDisplayActivity;
+import com.rangetech.eventnotify.Models.EventPost;
+import com.rangetech.eventnotify.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -89,22 +90,18 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                                     dateString=task.getResult().getString("event_date");
                                     holder.setTime(dateString);
 
-                                    CheckExpiry checkExpiry=new CheckExpiry(dateString,position);
-                                    if(checkExpiry.isExpired()){
-                                        if(participated.contentEquals("no")){
-                                            holder.setExpired(false);
-                                        }
+                                    if(event_list.get(position).getExpired().contentEquals("yes")){
+                                        holder.setExpired(false);
                                     }
 
-
-                                }catch (NullPointerException | ParseException e){
+                                }catch (NullPointerException e){
                                     e.printStackTrace();
                                 }
                                 final String finalDateString = dateString;
                                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Intent displayIntent=new Intent(context,EventDisplayActivity.class);
+                                        Intent displayIntent=new Intent(context, EventDisplayActivity.class);
                                         displayIntent.putExtra("EventName",desc_data);
                                         displayIntent.putExtra("EventDetails",details);
                                         displayIntent.putExtra("EventCover",image_url);

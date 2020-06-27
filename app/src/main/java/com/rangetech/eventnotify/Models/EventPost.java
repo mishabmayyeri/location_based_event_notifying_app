@@ -1,4 +1,4 @@
-package com.rangetech.eventnotify;
+package com.rangetech.eventnotify.Models;
 
 
 import java.util.Date;
@@ -8,15 +8,16 @@ public class EventPost {
     public String location_name, location_lat, location_long;
     public String participated;
     public Date timestamp;
+    public String expired;
 
     public EventPost() {
     }
 
     public EventPost(String user_id, String image_url, String desc,
                      String thumb, String title, String album_id,
-                     String event_date, String location_name,
-                     String location_lat, String location_long,
-                     String participated, Date timestamp) {
+                     String event_date, String location_name, String location_lat,
+                     String location_long, String participated,
+                     Date timestamp, String expired) {
         this.user_id = user_id;
         this.image_url = image_url;
         this.desc = desc;
@@ -29,6 +30,7 @@ public class EventPost {
         this.location_long = location_long;
         this.participated = participated;
         this.timestamp = timestamp;
+        this.expired = expired;
     }
 
     public String getUser_id() {
@@ -125,5 +127,13 @@ public class EventPost {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getExpired() {
+        return expired;
+    }
+
+    public void setExpired(String expired) {
+        this.expired = expired;
     }
 }

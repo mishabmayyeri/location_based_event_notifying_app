@@ -1,4 +1,4 @@
-package com.rangetech.eventnotify;
+package com.rangetech.eventnotify.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.rangetech.eventnotify.Fragments.AccountFragment;
+import com.rangetech.eventnotify.Fragments.HomeFragment;
+import com.rangetech.eventnotify.Fragments.NotificationFragment;
+import com.rangetech.eventnotify.R;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +36,7 @@ public class EventActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private NotificationFragment notificationFragment;
     private AccountFragment accountFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +82,7 @@ public class EventActivity extends AppCompatActivity {
         mAuth.signOut();
         sendToLogin();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -90,7 +96,7 @@ public class EventActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         if (!task.getResult().exists()) {
-                            Intent setupIntent = new Intent(EventActivity.this,SetupActivity.class);
+                            Intent setupIntent = new Intent(EventActivity.this, SetupActivity.class);
                             startActivity(setupIntent);
                             finish();
                         }
@@ -111,7 +117,7 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void sendToLogin() {
-        Intent loginIntent = new Intent(EventActivity.this,LoginActivity.class);
+        Intent loginIntent = new Intent(EventActivity.this, LoginActivity.class);
         startActivity(loginIntent);
         finish();
     }

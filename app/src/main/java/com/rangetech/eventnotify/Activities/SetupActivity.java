@@ -1,4 +1,4 @@
-package com.rangetech.eventnotify;
+package com.rangetech.eventnotify.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.rangetech.eventnotify.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -76,7 +77,7 @@ public class SetupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 finishAffinity();
-                startActivity(new Intent(SetupActivity.this,EventActivity.class));
+                startActivity(new Intent(SetupActivity.this, EventActivity.class));
 
             }
         });

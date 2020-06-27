@@ -1,4 +1,4 @@
-package com.rangetech.eventnotify;
+package com.rangetech.eventnotify.Helpers;
 
 import android.Manifest;
 import android.app.AlertDialog;

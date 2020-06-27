@@ -1,4 +1,4 @@
-package com.rangetech.eventnotify;
+package com.rangetech.eventnotify.Helpers;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.rangetech.eventnotify.Activities.EventDisplayActivity;
+import com.rangetech.eventnotify.Models.EventPost;
+import com.rangetech.eventnotify.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,25 +57,8 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
             holder.setTitleText(desc_data);
             final String image_url = event_list.get(position).getImage_url();
             holder.setEventImage(image_url);
-
-
-            final String location_latitude = event_list.get(position).getLocation_lat();
-            final String location_longitude = event_list.get(position).getLocation_long();
-
-
-            Double loc_lat = Double.valueOf(location_latitude);
-            Double loc_long = Double.valueOf(location_longitude);
-            Double my_lati = Double.valueOf(my_lat);
-            Double my_longi = Double.valueOf(my_long);
-
-            LocationDistanceCalculator locationDistanceCalculator = new LocationDistanceCalculator();
-            Double val = locationDistanceCalculator.getDistance(my_lati, my_longi, loc_lat, loc_long);
-            val=val/1000;
-            int value = (int) Math.round(val);
-            String distance = value + "";
-
             final String location_details = event_list.get(position).getLocation_name();
-            holder.setLocationText(location_details, distance);
+            holder.setLocationText(location_details,"");
             holder.setDetails(event_list.get(position).getDesc());
 
 
@@ -89,18 +75,13 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                     }
                 }
             });
-            String dateString = "";
-            try {
-                long millisecond = event_list.get(position).getTimestamp().getTime();
-                dateString = new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
-                dateString = event_list.get(position).getEvent_date();
-                holder.setTime(dateString);
 
-            } catch (NullPointerException e) {
-                e.printStackTrace();
+            String dateString = event_list.get(position).getEvent_date();
+            holder.setTime(dateString);
+            if(event_list.get(position).getExpired().contentEquals("yes")){
+                holder.setExpired(false);
             }
 
-            final String finalDateString = dateString;
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -108,14 +89,13 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                     displayIntent.putExtra("EventName", desc_data);
                     displayIntent.putExtra("EventDetails", event_list.get(position).desc);
                     displayIntent.putExtra("EventCover", image_url);
-                    displayIntent.putExtra("EventDate", finalDateString);
+                    displayIntent.putExtra("EventDate", dateString);
                     displayIntent.putExtra("AlbumId", event_list.get(position).getAlbum_id());
                     displayIntent.putExtra("UserID", event_list.get(position).getUser_id());
                     displayIntent.putExtra("EventLocation", location_details);
                     context.startActivity(displayIntent);
                 }
             });
-            holder.setParticipated(false);
 
         }catch (NullPointerException e){
             e.printStackTrace();
@@ -182,6 +162,20 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
         public void setDetails(String desc) {
             detailsText=mView.findViewById(R.id.desc);
             detailsText.setText(desc);
+        }
+        public void setExpired(boolean participated){
+            if(!participated) {
+                mView.findViewById(R.id.event_participated).setVisibility(View.VISIBLE);
+                ImageView img=mView.findViewById(R.id.event_participated_img);
+                RequestOptions placeholderOption = new RequestOptions();
+                placeholderOption.placeholder(R.drawable.rectangle);
+                Glide.with(context)
+                        .applyDefaultRequestOptions(placeholderOption)
+                        .load(R.drawable.ic_expired)
+                        .into(img);
+            }else {
+                mView.findViewById(R.id.event_participated).setVisibility(View.INVISIBLE);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.rangetech.eventnotify;
+package com.rangetech.eventnotify.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +13,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.rangetech.eventnotify.R;
 
 public class QRcode extends AppCompatActivity {
     String data="Hi Hello How are you";

@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">EventNotify</string>
-    <string name="action_search_text">Search</string>
     <string name="action_setting_text">Account Settings</string>
-    <string name="action_logout_text">Logout</string>
     <string name="api_key2">AIzaSyCRFxbzp3bIHkH-KHruM4cAAW-zsOS-150</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="log_in"><b>Log in</b></string>
@@ -103,8 +101,8 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_q_r_code">QRCode</string>
-    <string name="action_new_event">New Event</string>
     <string name="please_show_this_qr_code_to_verify_your_entry_to_the_event">Please show this QR Code to verify your Entry to the Event</string>
-    <string name="action_qr_code_reader">QR Code Reader</string>
+    <string name="title_location_permission">Enable Location ?</string>
+    <string name="text_location_permission">Please give your location permision to app to get details of the nearby location .</string>
 
 </resources>
