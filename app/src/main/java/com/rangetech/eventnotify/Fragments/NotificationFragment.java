@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,9 +51,7 @@ public class NotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.INVISIBLE);
-        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.VISIBLE);
-        View view = inflater.inflate(R.layout.fragment_notification, container, false);
+         View view = inflater.inflate(R.layout.fragment_notification, container, false);
         event_list = new ArrayList<>();
         event_list_view = view.findViewById(R.id.event_list_view);
         firebaseAuth = FirebaseAuth.getInstance();
@@ -65,17 +62,16 @@ public class NotificationFragment extends Fragment {
         event_list_view.setLayoutManager(linearLayoutManager);
         event_list_view.setAdapter(eventRecyclerAdapter);
         firebaseFirestore = FirebaseFirestore.getInstance();
-
-
-
+        event_list.clear();
         return view;
-
-
     }
+
 
     @Override
     public void onStart() {
         super.onStart();
+        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.INVISIBLE);
+        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.event_refresh_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,11 +81,7 @@ public class NotificationFragment extends Fragment {
     }
 
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i(NOTIFICATION_FRAGMENT,"on Pause called");
-    }
+
 
     @Override
     public void onResume()throws NullPointerException {
@@ -104,7 +96,6 @@ public class NotificationFragment extends Fragment {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                            try {
-                               event_list.clear();
                                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
                                    if (doc.getType() == DocumentChange.Type.ADDED) {
                                        EventPost eventPost = doc.getDocument().toObject(EventPost.class);

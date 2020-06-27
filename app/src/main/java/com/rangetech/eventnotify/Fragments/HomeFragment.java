@@ -53,8 +53,6 @@ public class HomeFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.INVISIBLE);
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         event_list = new ArrayList<>();
@@ -75,6 +73,14 @@ public class HomeFragment extends Fragment  {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.INVISIBLE);
+
     }
 
     @Override
