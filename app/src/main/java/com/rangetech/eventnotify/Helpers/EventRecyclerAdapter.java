@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,8 +61,6 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
             final String location_details = event_list.get(position).getLocation_name();
             holder.setLocationText(location_details,"");
             holder.setDetails(event_list.get(position).getDesc());
-
-
             String user_id = event_list.get(position).getUser_id();
             firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -75,19 +74,14 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                     }
                 }
             });
-
             String dateString = event_list.get(position).getEvent_date();
             holder.setTime(dateString);
-            if(event_list.get(position).getExpired().contentEquals("yes")){
-                holder.setExpired(false);
-            }
-
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent displayIntent = new Intent(context, EventDisplayActivity.class);
                     displayIntent.putExtra("EventName", desc_data);
-                    displayIntent.putExtra("EventDetails", event_list.get(position).desc);
+                    displayIntent.putExtra("EventDetails", event_list.get(position).getDesc());
                     displayIntent.putExtra("EventCover", image_url);
                     displayIntent.putExtra("EventDate", dateString);
                     displayIntent.putExtra("AlbumId", event_list.get(position).getAlbum_id());
@@ -96,10 +90,10 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                     context.startActivity(displayIntent);
                 }
             });
-
         }catch (NullPointerException e){
             e.printStackTrace();
         }
+
     }
 
     @Override

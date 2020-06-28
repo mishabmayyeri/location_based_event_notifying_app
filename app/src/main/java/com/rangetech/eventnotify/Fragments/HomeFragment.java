@@ -1,25 +1,16 @@
 package com.rangetech.eventnotify.Fragments;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import com.crowdfire.cfalertdialog.CFAlertDialog;
-import com.example.easywaylocation.EasyWayLocation;
-import com.example.easywaylocation.Listener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -54,8 +45,6 @@ public class HomeFragment extends Fragment  {
     private ViewGroup container;
     private LocationDistanceCalculator locationDistanceCalculator;
     private FusedLocationProviderClient client;
-    private EasyWayLocation easyWayLocation;
-
     public HomeFragment() {
     }
 
@@ -75,29 +64,10 @@ public class HomeFragment extends Fragment  {
         event_list_view.setAdapter(eventRecyclerAdapter);
         firstQuery = firebaseFirestore.collection("Posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING);
-
-        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.INVISIBLE);
         getActivity().findViewById(R.id.event_location_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onStart();
-            }
-        });
-        easyWayLocation=new EasyWayLocation(getActivity(), true, new Listener() {
-            @Override
-            public void locationOn() {
-                Log.i(LOCATION_TAG,"location on");
-            }
-
-            @Override
-            public void currentLocation(Location location) {
-                onStart();
-            }
-
-            @Override
-            public void locationCancelled() {
-
+                onCreate(savedInstanceState);
             }
         });
         return view;
@@ -106,29 +76,40 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onStart() {
         super.onStart();
+        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         if (checkSelfPermission(getContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            getActivity().findViewById(R.id.location_progress).setVisibility(View.VISIBLE);
-            client=new FusedLocationProviderClient(getActivity());
-            client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    if(task.isSuccessful()){
-                        if(task.getResult()==null){
-                            easyWayLocation.startLocation();
-                            Toast.makeText(getContext(),"If you face a delay in loading data, Please reopen this app.",Toast.LENGTH_LONG).show();
-                        }else{
-                            proceed(task.getResult().getLatitude(),task.getResult().getLongitude());
+            try {
+                getActivity().findViewById(R.id.location_progress).setVisibility(View.VISIBLE);
+                client=new FusedLocationProviderClient(getActivity());
+                client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if(task.isSuccessful()){
+                            if(task.getResult()==null){
+                                Toast.makeText(getContext(),"No Location ! Please turn ON device location and open app later.",Toast.LENGTH_LONG).show();
+                            }else{
+                                proceed(task.getResult().getLatitude(),task.getResult().getLongitude());
+                            }
                         }
                     }
-                }
-            });
+                });
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }
         else
         {
             PermissionListener permissionlistener = new PermissionListener() {
                 @Override
                 public void onPermissionGranted() {
-                    onStart();
+                    onCreate(savedInstanceState);
                 }
 
                 @Override
@@ -145,21 +126,23 @@ public class HomeFragment extends Fragment  {
                     .check();
         }
 
+
+
     }
-
-
 
     private void proceed(double latitude, double longitude) {
         createRecyclerView(latitude,longitude);
     }
 
     private void createRecyclerView(double latitude, double longitude) {
-        event_list.clear();
+
         if (firebaseAuth.getCurrentUser() != null) {
             firstQuery.addSnapshotListener((queryDocumentSnapshots, e) -> {
                 try {
+                    event_list.clear();
                     for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
                         if (doc.getType() == DocumentChange.Type.ADDED) {
+
                             EventPost eventPost = doc.getDocument().toObject(EventPost.class);
                             double d = locationDistanceCalculator.getDistance(latitude,
                                     longitude,
@@ -168,21 +151,17 @@ public class HomeFragment extends Fragment  {
                             d = d / 1000;
                             int value = (int) Math.round(d);
                             if (value <= RADIUS) {
-                                if(isExpired(eventPost.event_date)){
-                                    eventPost.setExpired("yes");
-                                }else{
-                                    eventPost.setExpired("no");
-                                }
                                 String loc = eventPost.getLocation_name();
                                 loc = loc + " " + value + "";
-                                eventPost.setEvent_date(eventPost.event_date);
                                 eventPost.setLocation_name(loc);
                                 event_list.add(eventPost);
+
                             }
-                            eventRecyclerAdapter.notifyDataSetChanged();
-                            getActivity().findViewById(R.id.location_progress).setVisibility(View.INVISIBLE);
+
                         }
                     }
+                    eventRecyclerAdapter.notifyDataSetChanged();
+                    getActivity().findViewById(R.id.location_progress).setVisibility(View.INVISIBLE);
                 } catch (NullPointerException e1) {
                     e1.printStackTrace();
 

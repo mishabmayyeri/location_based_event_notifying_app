@@ -102,6 +102,8 @@ public class EventDisplayActivity extends AppCompatActivity {
         if(expired) {
             eventDateBtn.setText(eventDate+" (expired!)");
             eventDateBtn.setBackgroundColor(getColor(R.color.red));
+        }else{
+            eventDateBtn.setText(eventDate);
         }
         eventLocationBtn.setText(eventLocation);
         toolbar.setTitle("" + eventName);

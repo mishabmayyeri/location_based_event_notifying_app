@@ -50,14 +50,18 @@ public class NotificationFragment extends Fragment {
          View view = inflater.inflate(R.layout.fragment_notification, container, false);
         event_list = new ArrayList<>();
         event_list_view = view.findViewById(R.id.event_list_view);
-        firebaseAuth = FirebaseAuth.getInstance();
         eventRecyclerAdapter = new MyEventRecyclerAdapter(event_list);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(container.getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         event_list_view.setLayoutManager(linearLayoutManager);
         event_list_view.setAdapter(eventRecyclerAdapter);
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        getActivity().findViewById(R.id.event_refresh_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               onCreate(savedInstanceState);
+            }
+        });
          return view;
     }
 
@@ -67,21 +71,13 @@ public class NotificationFragment extends Fragment {
         super.onStart();
         getActivity().findViewById(R.id.event_location_fab).setVisibility(View.INVISIBLE);
         getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.event_refresh_fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onResume();
-            }
-        });
     }
 
-
-
-
     @Override
-    public void onResume()throws NullPointerException {
-        super.onResume();
-        event_list.clear();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        firebaseAuth=FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
         if(firebaseAuth.getCurrentUser()!=null) {
             getActivity().findViewById(R.id.location_progress).setVisibility(View.VISIBLE);
             currentUser=firebaseAuth.getUid();
@@ -91,43 +87,52 @@ public class NotificationFragment extends Fragment {
                     addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                           try {
-                               for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-                                   if (doc.getType() == DocumentChange.Type.ADDED) {
-                                       EventPost eventPost = doc.getDocument().toObject(EventPost.class);
+                            try {
+                                event_list.clear();
+                                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+                                    if (doc.getType() == DocumentChange.Type.ADDED) {
+                                        EventPost eventPost = doc.getDocument().toObject(EventPost.class);
                                         firebaseFirestore.collection("Posts")
-                                               .document(eventPost.album_id)
-                                               .get()
-                                               .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                          @Override
-                                                                          public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                              if (task.isSuccessful()) {
-                                                                                  String evtndate=task.getResult().getString("event_date");
-                                                                                  if(isExpired(evtndate)){
-                                                                                      eventPost.setExpired("yes");
-                                                                                  }else{
-                                                                                      eventPost.setExpired("no");
-                                                                                  }
-                                                                                  eventPost.setEvent_date(eventPost.event_date);
-                                                                                  event_list.add(eventPost);
-                                                                                  eventRecyclerAdapter.notifyDataSetChanged();
-                                                                                  getActivity().findViewById(R.id.location_progress).setVisibility(View.INVISIBLE);
+                                                .document(eventPost.getAlbum_id())
+                                                .get()
+                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        try {
+                                                            if (task.isSuccessful()) {
+                                                            String evtndate=task.getResult().getString("event_date");
+                                                            if(isExpired(evtndate)){
+                                                                eventPost.setExpired("yes");
+                                                            }else{
+                                                                eventPost.setExpired("no");
+                                                            }
+                                                            eventPost.setEvent_date(eventPost.getEvent_date());
+                                                            event_list.add(eventPost);
+                                                            eventRecyclerAdapter.notifyDataSetChanged();
+                                                            getActivity().findViewById(R.id.location_progress).setVisibility(View.INVISIBLE);
 
-                                                                              }
-                                                                          }
-                                                                      });
+                                                        }
+                                                        }catch (NullPointerException e){
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    }
+
+                                                });
 
 
-                                                }
-                                        }
-                           }catch (NullPointerException e1){
-                               e1.printStackTrace();
-                           }
+                                    }
+                                }
+                            }catch (NullPointerException e1){
+                                e1.printStackTrace();
+                            }
                         }
                     });
         }
 
+
     }
+
 
     private boolean isExpired(String event_date) {
         CheckExpiry checkExpiry=new CheckExpiry(event_date,0);

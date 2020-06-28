@@ -4,11 +4,11 @@ package com.rangetech.eventnotify.Models;
 import java.util.Date;
 
 public class EventPost {
-    public String user_id, image_url, desc, thumb, title, album_id, event_date;
-    public String location_name, location_lat, location_long;
-    public String participated;
-    public Date timestamp;
-    public String expired;
+    private String user_id, image_url, desc, thumb, title, album_id, event_date;
+    private String location_name, location_lat, location_long;
+    private String participated;
+    private Date timestamp;
+    private String expired;
 
     public EventPost() {
     }

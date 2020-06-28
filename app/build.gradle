@@ -56,8 +56,6 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'info.androidhive:barcode-reader:1.1.5'
     implementation 'gun0912.ted:tedpermission:2.2.3'
-    implementation 'com.github.prabhat1707:EasyWayLocation:2.0'
-    implementation 'com.yayandroid:LocationManager:2.3.0'
     implementation 'com.google.android.libraries.places:places:2.3.0'
 }
 apply plugin: 'com.google.gms.google-services'

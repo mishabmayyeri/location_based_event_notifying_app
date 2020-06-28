@@ -66,6 +66,7 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                                 final String user_id =  task.getResult().getString("user_id");
                                 final String details=task.getResult().getString("desc");
                                 final String locationName=task.getResult().getString("location_name");
+                                final String eventDate=task.getResult().getString("event_date");
 
                                 firebaseFirestoreUsers.collection("Users").document(user_id).get()
                                         .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -82,22 +83,13 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
 
                                         });
 
-                                String dateString = "";
-                                try {
-                                    Date timestamp=task.getResult().getDate("timestamp");
-                                    long millisecond=timestamp.getTime();
-                                    dateString= new SimpleDateFormat("dd/MM/yyyy").format(new Date(millisecond));
-                                    dateString=task.getResult().getString("event_date");
-                                    holder.setTime(dateString);
+                                    holder.setTime(eventDate);
 
                                     if(event_list.get(position).getExpired().contentEquals("yes")){
                                         holder.setExpired(false);
                                     }
 
-                                }catch (NullPointerException e){
-                                    e.printStackTrace();
-                                }
-                                final String finalDateString = dateString;
+
                                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -105,7 +97,7 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                                         displayIntent.putExtra("EventName",desc_data);
                                         displayIntent.putExtra("EventDetails",details);
                                         displayIntent.putExtra("EventCover",image_url);
-                                        displayIntent.putExtra("EventDate", finalDateString);
+                                        displayIntent.putExtra("EventDate",eventDate);
                                         displayIntent.putExtra("UserID",user_id);
                                         displayIntent.putExtra("AlbumId",event_list.get(position).getAlbum_id());
                                         displayIntent.putExtra("EventLocation",locationName);
@@ -126,6 +118,8 @@ public class MyEventRecyclerAdapter extends RecyclerView.Adapter<MyEventRecycler
                 holder.setParticipated(false);
             }
         }catch (NullPointerException e){
+            e.printStackTrace();
+        }catch (IndexOutOfBoundsException e){
             e.printStackTrace();
         }
 
