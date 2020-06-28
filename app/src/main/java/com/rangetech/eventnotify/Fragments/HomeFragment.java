@@ -1,19 +1,25 @@
 package com.rangetech.eventnotify.Fragments;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import com.example.easywaylocation.EasyWayLocation;
-import com.example.easywaylocation.Listener;
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -45,7 +51,6 @@ public class HomeFragment extends Fragment  {
     private ViewGroup container;
     private LocationDistanceCalculator locationDistanceCalculator;
     private FusedLocationProviderClient client;
-    private EasyWayLocation easyWayLocation;
 
     public HomeFragment() {
     }
@@ -66,10 +71,13 @@ public class HomeFragment extends Fragment  {
         event_list_view.setAdapter(eventRecyclerAdapter);
         firstQuery = firebaseFirestore.collection("Posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING);
+
+        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.INVISIBLE);
         getActivity().findViewById(R.id.event_location_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onCreate(savedInstanceState);
+                onStart();
             }
         });
         return view;
@@ -78,42 +86,54 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onStart() {
         super.onStart();
-        getActivity().findViewById(R.id.event_location_fab).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.event_refresh_fab).setVisibility(View.INVISIBLE);
 
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (checkSelfPermission(getContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getActivity().findViewById(R.id.location_progress).setVisibility(View.VISIBLE);
-            easyWayLocation = new EasyWayLocation(getContext(), false, new Listener() {
+            //proceed(location.getLatitude(),location.getLongitude());
+            client=new FusedLocationProviderClient(getActivity());
+            client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
                 @Override
-                public void locationOn() {
-                    Toast.makeText(getContext(),"Turned ON",Toast.LENGTH_SHORT).show();
+                public void onComplete(@NonNull Task<Location> task) {
+                    if(task.isSuccessful()){
+                        if(task.getResult()==null){
+                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getActivity(), R.style.AppTheme)
+                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                    .setTitle("No Location found. ")
+                                    .setIcon(R.drawable.ic_warning_black_24dp)
+                                    .setMessage("Please Turn ON Location and open app again.")
+                                    .setCancelable(false)
+                                    .addButton("Turn ON Location ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(final DialogInterface dialog, int which) {
+                                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                                    startActivity(intent);
+                                                    getActivity().finishAffinity();
+                                                }
+                                            }).addButton("    CANCEL   ", Color.parseColor("#3e3d63"), Color.parseColor("#e0e0e0"), CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                            builder.show();
 
-                }
-
-                @Override
-                public void currentLocation(Location location) {
-                    proceed(location.getLatitude(),location.getLongitude());
-                }
-
-                @Override
-                public void locationCancelled() {
-                    Toast.makeText(getContext(),"Location turned OFF",Toast.LENGTH_SHORT).show();
-
+                        }else{
+                            proceed(task.getResult().getLatitude(),task.getResult().getLongitude());
+                        }
+                    }
                 }
             });
-            easyWayLocation.startLocation();
         }
         else
         {
             PermissionListener permissionlistener = new PermissionListener() {
                 @Override
                 public void onPermissionGranted() {
-                    onCreate(savedInstanceState);
+                    onStart();
                 }
 
                 @Override
@@ -131,6 +151,8 @@ public class HomeFragment extends Fragment  {
         }
 
     }
+
+
     private void proceed(double latitude, double longitude) {
         createRecyclerView(latitude,longitude);
     }
