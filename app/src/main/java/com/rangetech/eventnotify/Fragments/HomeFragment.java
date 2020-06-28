@@ -12,11 +12,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.crowdfire.cfalertdialog.CFAlertDialog;
+import com.example.easywaylocation.EasyWayLocation;
+import com.example.easywaylocation.Listener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -51,6 +54,7 @@ public class HomeFragment extends Fragment  {
     private ViewGroup container;
     private LocationDistanceCalculator locationDistanceCalculator;
     private FusedLocationProviderClient client;
+    private EasyWayLocation easyWayLocation;
 
     public HomeFragment() {
     }
@@ -80,47 +84,38 @@ public class HomeFragment extends Fragment  {
                 onStart();
             }
         });
+        easyWayLocation=new EasyWayLocation(getActivity(), true, new Listener() {
+            @Override
+            public void locationOn() {
+                Log.i(LOCATION_TAG,"location on");
+            }
+
+            @Override
+            public void currentLocation(Location location) {
+                onStart();
+            }
+
+            @Override
+            public void locationCancelled() {
+
+            }
+        });
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
         if (checkSelfPermission(getContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getActivity().findViewById(R.id.location_progress).setVisibility(View.VISIBLE);
-            //proceed(location.getLatitude(),location.getLongitude());
             client=new FusedLocationProviderClient(getActivity());
             client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
                 @Override
                 public void onComplete(@NonNull Task<Location> task) {
                     if(task.isSuccessful()){
                         if(task.getResult()==null){
-                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getActivity(), R.style.AppTheme)
-                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                    .setTitle("No Location found. ")
-                                    .setIcon(R.drawable.ic_warning_black_24dp)
-                                    .setMessage("Please Turn ON Location and open app again.")
-                                    .setCancelable(false)
-                                    .addButton("Turn ON Location ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(final DialogInterface dialog, int which) {
-                                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                                    startActivity(intent);
-                                                    getActivity().finishAffinity();
-                                                }
-                                            }).addButton("    CANCEL   ", Color.parseColor("#3e3d63"), Color.parseColor("#e0e0e0"), CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            });
-                            builder.show();
-
+                            easyWayLocation.startLocation();
+                            Toast.makeText(getContext(),"If you face a delay in loading data, Please reopen this app.",Toast.LENGTH_LONG).show();
                         }else{
                             proceed(task.getResult().getLatitude(),task.getResult().getLongitude());
                         }
@@ -153,15 +148,16 @@ public class HomeFragment extends Fragment  {
     }
 
 
+
     private void proceed(double latitude, double longitude) {
         createRecyclerView(latitude,longitude);
     }
 
     private void createRecyclerView(double latitude, double longitude) {
+        event_list.clear();
         if (firebaseAuth.getCurrentUser() != null) {
             firstQuery.addSnapshotListener((queryDocumentSnapshots, e) -> {
                 try {
-                    event_list.clear();
                     for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
                         if (doc.getType() == DocumentChange.Type.ADDED) {
                             EventPost eventPost = doc.getDocument().toObject(EventPost.class);
@@ -179,6 +175,7 @@ public class HomeFragment extends Fragment  {
                                 }
                                 String loc = eventPost.getLocation_name();
                                 loc = loc + " " + value + "";
+                                eventPost.setEvent_date(eventPost.event_date);
                                 eventPost.setLocation_name(loc);
                                 event_list.add(eventPost);
                             }
@@ -204,13 +201,6 @@ public class HomeFragment extends Fragment  {
         }
         return false;
     }
-
-
-
-
-
-
-
 
 }
 

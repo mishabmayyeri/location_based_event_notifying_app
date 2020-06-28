@@ -108,6 +108,7 @@ public class NotificationFragment extends Fragment {
                                                                                   }else{
                                                                                       eventPost.setExpired("no");
                                                                                   }
+                                                                                  eventPost.setEvent_date(eventPost.event_date);
                                                                                   event_list.add(eventPost);
                                                                                   eventRecyclerAdapter.notifyDataSetChanged();
                                                                                   getActivity().findViewById(R.id.location_progress).setVisibility(View.INVISIBLE);

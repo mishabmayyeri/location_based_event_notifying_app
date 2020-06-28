@@ -22,7 +22,6 @@ public class CheckExpiry {
     }
 
     public boolean isExpired() throws ParseException {
-
         today = new SimpleDateFormat("dd-MM-yyy").format(Calendar.getInstance().getTime());
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         Date todayDate= sdf.parse(today);

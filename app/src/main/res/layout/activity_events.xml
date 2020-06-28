@@ -41,7 +41,7 @@
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:layout_width="80dp"
-        android:indeterminateTint="@color/white"
+        android:indeterminateTint="@color/greyColour"
         android:id="@+id/location_progress"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_height="80dp"
